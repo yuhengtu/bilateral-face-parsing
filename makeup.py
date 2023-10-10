@@ -6,7 +6,8 @@ from skimage.filters import gaussian
 
 def sharpen(img):
     img = img * 1.0
-    gauss_out = gaussian(img, sigma=5, multichannel=True)
+    # gauss_out = gaussian(img, sigma=5, multichannel=True)
+    gauss_out = gaussian(img, sigma=5, channel_axis=-1) #修改
 
     alpha = 1.5
     img_out = (img - gauss_out) * alpha + img
@@ -89,7 +90,7 @@ if __name__ == '__main__':
         'upper_lip': 12,
         'lower_lip': 13
     }
-    image_path = '/mnt/workspace/face-parsing.PyTorch-master/data/CelebAMask-HQ/CelebA-HQ-imgtest-img/{}.jpg'.format(num)
+    image_path = '/mnt/workspace/face-parsing.PyTorch-master/data/CelebAMask-HQ/CelebA-HQ-img/test-img/{}.jpg'.format(num)
     parsing_path = 'res/test_res/{}.png'.format(num)
 
     image = cv2.imread(image_path)
@@ -105,14 +106,14 @@ if __name__ == '__main__':
     cv2.imwrite('res/makeup/116_ori.png', cv2.resize(ori, (512, 512)))
     cv2.imwrite('res/makeup/116_2.png', cv2.resize(image, (512, 512)))
 
-    cv2.imshow('image', cv2.resize(ori, (512, 512)))
-    cv2.imshow('color', cv2.resize(image, (512, 512)))
+    # cv2.imshow('image', cv2.resize(ori, (512, 512)))
+    # cv2.imshow('color', cv2.resize(image, (512, 512)))
 
     # cv2.imshow('image', ori)
     # cv2.imshow('color', image)
 
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
 
 

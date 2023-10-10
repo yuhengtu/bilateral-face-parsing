@@ -18,6 +18,7 @@ class OhemCELoss(nn.Module):
         self.criteria = nn.CrossEntropyLoss(ignore_index=ignore_lb, reduction='none')
 
     def forward(self, logits, labels):
+        # logits 是在最后一个全连接层之前的输出，没有经过激活函数softmax
         N, C, H, W = logits.size()
         loss = self.criteria(logits, labels).view(-1)
         loss, _ = torch.sort(loss, descending=True)
@@ -28,19 +29,19 @@ class OhemCELoss(nn.Module):
         return torch.mean(loss)
 
 
-class SoftmaxFocalLoss(nn.Module):
-    def __init__(self, gamma, ignore_lb=255, *args, **kwargs):
-        super(SoftmaxFocalLoss, self).__init__()
-        self.gamma = gamma
-        self.nll = nn.NLLLoss(ignore_index=ignore_lb)
+# class SoftmaxFocalLoss(nn.Module):
+#     def __init__(self, gamma, ignore_lb=255, *args, **kwargs):
+#         super(SoftmaxFocalLoss, self).__init__()
+#         self.gamma = gamma
+#         self.nll = nn.NLLLoss(ignore_index=ignore_lb)
 
-    def forward(self, logits, labels):
-        scores = F.softmax(logits, dim=1)
-        factor = torch.pow(1.-scores, self.gamma)
-        log_score = F.log_softmax(logits, dim=1)
-        log_score = factor * log_score
-        loss = self.nll(log_score, labels)
-        return loss
+#     def forward(self, logits, labels):
+#         scores = F.softmax(logits, dim=1)
+#         factor = torch.pow(1.-scores, self.gamma)
+#         log_score = F.log_softmax(logits, dim=1)
+#         log_score = factor * log_score
+#         loss = self.nll(log_score, labels)
+#         return loss
 
 
 if __name__ == '__main__':

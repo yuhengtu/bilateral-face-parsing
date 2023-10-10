@@ -25,6 +25,9 @@ class FaceMask(Dataset):
         self.rootpth = rootpth
 
         self.imgs = os.listdir(os.path.join(self.rootpth, 'CelebA-HQ-img'))
+        # 修改：标签的根目录
+        self.mask_root = os.path.join(rootpth, 'mask')  
+        # 
 
         #  pre-processing
         self.to_tensor = transforms.Compose([
@@ -43,9 +46,20 @@ class FaceMask(Dataset):
 
     def __getitem__(self, idx):
         impth = self.imgs[idx]
-        img = Image.open(osp.join(self.rootpth, 'CelebA-HQ-img', impth))
+        # img = Image.open(osp.join(self.rootpth, 'CelebA-HQ-img', impth))
+        # 修改：
+        img_path = osp.join(self.rootpth, 'CelebA-HQ-img', impth)
+        # 确保img_path是文件而不是目录
+        if os.path.isfile(img_path):
+            img = Image.open(img_path)
+        else:
+            # 如果是目录，则跳过这个数据点
+            return self.__getitem__(idx + 1)
+        # 
+
         img = img.resize((512, 512), Image.BILINEAR)
-        label = Image.open(osp.join(self.rootpth, 'mask', impth[:-3]+'png')).convert('P')
+        # label = Image.open(osp.join(self.rootpth, 'mask', impth[:-3]+'png')).convert('P')
+        label = Image.open(osp.join(self.mask_root, impth[:-3] + 'png')).convert('P') #修改
         # print(np.unique(np.array(label)))
         if self.mode == 'train':
             im_lb = dict(im=img, lb=label)

@@ -6,7 +6,7 @@ from model import BiSeNet
 from face_dataset import FaceMask
 from loss import OhemCELoss
 from bilateral_solver_conv import BilateralSolverLocal
-from evaluate import evaluate
+from bila_evaluate import evaluate
 from optimizer import Optimizer
 import cv2
 import numpy as np
@@ -83,8 +83,9 @@ def train():
     st = glob_st = time.time()
     diter = iter(dl)
     epoch = 0
-    # for it in range(max_iter):
+    
     for it in range(max_iter):
+    # for it in range(1):
         try:
             im, lb = next(diter) #input和gt，分别来自CelebA-HQ-img和mask, rgb和灰度，reference和target
         except StopIteration:
@@ -107,9 +108,10 @@ def train():
         # (batch_size, num_channels, height, width)
         # lb ：torch.Size([16, 448, 448])
         # (batch_size, height, width)
-
-        loss_bila = BilateralSolverLocal(logits = out, reference = im, target = lb)
-        loss = lossp + loss2 + loss3 + loss_bila
+        loss_bila = BilateralSolverLocal(output=out, reference=im, target=lb).cuda()
+        loss_bila_value = loss_bila()
+        loss = lossp + loss2 + loss3 + loss_bila_value
+    
         loss.backward()
         optim.step()
 
@@ -142,11 +144,11 @@ def train():
             st = ed
         if (it+1) % 5000 == 0:
             state = net.state_dict()
-            torch.save(state, './res/cp/{}_iter.pth'.format(it))
+            torch.save(state, './res/cp_bila/{}_iter.pth'.format(it))
             evaluate(dspth='/mnt/workspace/face-parsing.PyTorch-master/data/CelebAMask-HQ/CelebA-HQ-img/test-img', cp='{}_iter.pth'.format(it))
 
     #  dump the final model
-    save_pth = osp.join(respth, 'model_final_diss.pth')
+    save_pth = osp.join(respth, 'model_final_diss_bila.pth')
     state = net.state_dict()
     torch.save(state, save_pth)
     logger.info('training done, model saved to: {}'.format(save_pth))

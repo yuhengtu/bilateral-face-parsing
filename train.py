@@ -74,10 +74,10 @@ def train():
     net = BiSeNet(n_classes=n_classes)
     net.cuda()
     net.train()
-    net = nn.parallel.DistributedDataParallel(net,
-            device_ids = [args.local_rank, ],
-            output_device = args.local_rank
-            )
+    # net = nn.parallel.DistributedDataParallel(net,
+    #         device_ids = [args.local_rank, ],
+    #         output_device = args.local_rank
+    #         )
     score_thres = 0.7
     n_min = n_img_per_gpu * cropsize[0] * cropsize[1]//16
     LossP = OhemCELoss(thresh=score_thres, n_min=n_min, ignore_lb=ignore_idx)

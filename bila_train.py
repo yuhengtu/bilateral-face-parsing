@@ -110,7 +110,13 @@ def train():
         # (batch_size, height, width)
         loss_bila = BilateralSolverLocal(output=out, reference=im, target=lb).cuda()
         loss_bila_value = loss_bila()
-        loss = lossp + loss2 + loss3 + loss_bila_value
+        # print(lossp + loss2 + loss3)
+        # print(loss_bila_value)
+        # tensor(9.0681, device='cuda:0', grad_fn=<AddBackward0>)
+        # tensor(22604844., device='cuda:0', grad_fn=<AddBackward0>)
+
+        # loss = lossp + loss2 + loss3 + loss_bila_value / 11302422.
+        loss = lossp + loss2 + loss3 + loss_bila_value / 2825605.
     
         loss.backward()
         optim.step()

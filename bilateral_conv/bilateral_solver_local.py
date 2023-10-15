@@ -9,7 +9,7 @@ class BilateralSolverLocal(nn.Module):
                  reference: np.ndarray,
                  target: np.ndarray,
                  sigma_space: float = 32,
-                 sigma_luma: float = 8,
+                 siegma_luma: float = 8,
                  lam: float = 128,
                  kernel_size: int = 21
                  ) -> None:
@@ -31,7 +31,7 @@ class BilateralSolverLocal(nn.Module):
         self.conv = nn.Conv2d(
             1, kernel_size * kernel_size - 1, kernel_size, padding=(kernel_size - 1) // 2, padding_mode='replicate'
         )#输入通道，        输出通道           ，卷积核       ，在高度和宽度上都添加了足够的填充
-        self.conv.weight = nn.Parameter(weight, requires_grad=False)
+        self.conv.weight = nn.Parameter(weight, rquires_grad=False)
 
         # 获取图像大小
         self.image_size = (reference.shape[1], reference.shape[0])

@@ -4,7 +4,8 @@ __pycache__/
 .ipynb_checkpoints/
 data/
 debug.py
-
+a.py
+res/
 
 
 

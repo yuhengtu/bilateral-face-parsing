@@ -5,7 +5,7 @@ from logger import setup_logger
 from model import BiSeNet
 from face_dataset import FaceMask
 from loss import OhemCELoss
-from bilateral_solver_conv import BilateralSolverLocal
+from bilateral_solver_conv import BilateralSolverLocal 
 from bila_evaluate import evaluate
 from optimizer import Optimizer
 import cv2
@@ -58,6 +58,7 @@ def train():
     LossP = OhemCELoss(thresh=score_thres, n_min=n_min, ignore_lb=ignore_idx)
     Loss2 = OhemCELoss(thresh=score_thres, n_min=n_min, ignore_lb=ignore_idx)
     Loss3 = OhemCELoss(thresh=score_thres, n_min=n_min, ignore_lb=ignore_idx)
+    Loss_bila = BilateralSolverLocal()
     
     ## optimizer
     momentum = 0.9
@@ -102,21 +103,11 @@ def train():
         lossp = LossP(out, lb)
         loss2 = Loss2(out16, lb)
         loss3 = Loss3(out32, lb)
-        # out ：torch.Size([16, 19, 448, 448])
-        # (batch_size, num_classes, height, width)
-        # im ：torch.Size([16, 3, 448, 448])
-        # (batch_size, num_channels, height, width)
-        # lb ：torch.Size([16, 448, 448])
-        # (batch_size, height, width)
-        loss_bila = BilateralSolverLocal(output=out, reference=im, target=lb).cuda()
-        loss_bila_value = loss_bila()
         # print(lossp + loss2 + loss3)
-        # print(loss_bila_value)
         # tensor(9.0681, device='cuda:0', grad_fn=<AddBackward0>)
-        # tensor(22604844., device='cuda:0', grad_fn=<AddBackward0>)
+        loss_bila = Loss_bila(output=out, reference=im, target=lb)
 
-        # loss = lossp + loss2 + loss3 + loss_bila_value / 11302422.
-        loss = lossp + loss2 + loss3 + loss_bila_value / 2825605.
+        loss = lossp + loss2 + loss3 + loss_bila
     
         loss.backward()
         optim.step()

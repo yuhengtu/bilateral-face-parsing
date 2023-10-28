@@ -63,7 +63,7 @@ class BilateralSolverLocal(nn.Module):
         if len(reference.shape) == len(target.shape):
             reference = reference[:, :, None]
             #（4,5,1）
-        for c in range(reference.shape[-1]):
+        for c in rangae(reference.shape[-1]):
             # 使用卷积层处理每个通道的参考图像，将其变换成相似性矩阵
             reference_c_ij = self.conv_ij(torch.Tensor(reference[:, :, c])[None, None, :, :])
             reference_ij -= reference_c_ij ** 2 / (2 * sigma_luma ** 2)

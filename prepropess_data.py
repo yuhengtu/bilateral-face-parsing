@@ -13,7 +13,7 @@ face_sep_mask = '/mnt/workspace/face-parsing.PyTorch-master/data/CelebAMask-HQ/C
 mask_path = '/mnt/workspace/face-parsing.PyTorch-master/data/CelebAMask-HQ/mask'
 counter = 0
 total = 0
-for i in range(15):
+for i in range(15): 
 
     atts = ['skin', 'l_brow', 'r_brow', 'l_eye', 'r_eye', 'eye_g', 'l_ear', 'r_ear', 'ear_r',
             'nose', 'mouth', 'u_lip', 'l_lip', 'neck', 'neck_l', 'cloth', 'hair', 'hat']

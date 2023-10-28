@@ -21,19 +21,18 @@ class FaceMask(Dataset):
         super(FaceMask, self).__init__(*args, **kwargs)
         assert mode in ('train', 'val', 'test')
         self.mode = mode
-        self.ignore_lb = 255
+        self.ignore_lb = 255 # 所有像素值为 255 的黑色像素都被视为忽略的区域，不需要进行分割或处理
         self.rootpth = rootpth
 
         self.imgs = os.listdir(os.path.join(self.rootpth, 'CelebA-HQ-img'))
         # 修改：标签的根目录
         self.mask_root = os.path.join(rootpth, 'mask')  
-        # 
 
         #  pre-processing
         self.to_tensor = transforms.Compose([
             transforms.ToTensor(),
             transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-            ])
+            ]) # 图像转tensor和标准化
         self.trans_train = Compose([
             ColorJitter(
                 brightness=0.5,
@@ -42,7 +41,7 @@ class FaceMask(Dataset):
             HorizontalFlip(),
             RandomScale((0.75, 1.0, 1.25, 1.5, 1.75, 2.0)),
             RandomCrop(cropsize)
-            ])
+            ]) # 数据增强
 
     def __getitem__(self, idx):
         impth = self.imgs[idx]
@@ -58,6 +57,7 @@ class FaceMask(Dataset):
         # 
 
         img = img.resize((512, 512), Image.BILINEAR)
+        
         # label = Image.open(osp.join(self.rootpth, 'mask', impth[:-3]+'png')).convert('P')
         label = Image.open(osp.join(self.mask_root, impth[:-3] + 'png')).convert('P') #修改
         # print(np.unique(np.array(label)))

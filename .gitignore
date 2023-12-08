@@ -166,3 +166,5 @@ outputs/
 # System or temporary files
 .DS_Store
 Thumbs.db
+
+a.py
